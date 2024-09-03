@@ -52,7 +52,7 @@ android {
            signingConfig signingConfigs.debug
         }
     }
-        namespace 'com.example.locket_widget'
+    
     buildFeatures {
         viewBinding true
     }
