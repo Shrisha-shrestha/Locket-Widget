@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "597205789236",
+    "project_id": "locket-widget-7f13d",
+    "storage_bucket": "locket-widget-7f13d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:597205789236:android:946225ed2d90e7e54eb861",
+        "android_client_info": {
+          "package_name": "com.example.locket_widget"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD9ofAhel40MX-YDmY4vYxpyZ9_0nidc3I"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
