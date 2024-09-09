@@ -1,0 +1,83 @@
+name: Build and Release APK
+
+on:
+  push:
+    branches:
+      - dev
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: "zulu"
+          java-version: "17"
+          cache: "gradle"
+
+      - name: Install Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.22.2"
+          channel: "stable"
+          cache: true
+      
+      - name: Verify Flutter Installation
+        run: flutter --version
+
+      - name: Flutter Pub Get
+        run: flutter pub get
+
+      - name: Build APK
+        run: flutter build apk
+      
+      - name: Set Tag Name
+        run: echo "TAG_NAME=dev-$(date +%Y%m%d%H%M%S)" >> $GITHUB_ENV
+      
+      - name: Set Release Name
+        run: echo "RELEASE_NAME=locket-dev-$(date +%Y%m%d%H%M%S)" >> $GITHUB_ENV
+
+      - name: Create Release
+        id: create_release
+        uses: joutvhu/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+        with:
+          tag_name: ${{ env.TAG_NAME }}
+          name: ${{ env.RELEASE_NAME }}
+          draft: false
+          prerelease: false
+          make_latest: true
+          on_release_exists: skip
+          remove_assets: false
+    
+      - name: Upload APK to GitHub Releases
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: build/app/outputs/flutter-apk/app-debug.apk
+          asset_name: locket-dev.apk
+          asset_content_type: application/vnd.android.package-archive
+  
+      # Optional: Cleanup old releases
+      # - name: Cleanup old releases
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #   run: |
+      #     releases=$(gh api repos/${{ github.repository }}/releases --paginate | jq -r '.[].id')
+      #     count=0
+      #     for release in $releases; do
+      #       count=$((count + 1))
+      #       if [ $count -gt 5 ]; then
+      #         gh api repos/${{ github.repository }}/releases/$release -X DELETE
+      #       fi
