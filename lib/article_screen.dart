@@ -42,7 +42,7 @@ class _ArticleScreenState extends State<ArticleScreen> {
           }
           updateHeadline(widget.article);
         },
-        label: const Text('Update Homescreen'),
+        label: const Text('Update Homescreen Widget'),
       ),
       body: ListView(
         padding: const EdgeInsets.all(16.0),

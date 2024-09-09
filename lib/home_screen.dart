@@ -1,16 +1,13 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:home_widget/home_widget.dart';
 
 import 'article_screen.dart';
 import 'news_data.dart';
 
 const String androidWidgetName = 'LocketWidget';
-
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key});
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
 
 void updateHeadline(NewsArticle newHeadline) {
   HomeWidget.saveWidgetData<String>('headline_title', newHeadline.title);
@@ -20,7 +17,24 @@ void updateHeadline(NewsArticle newHeadline) {
   );
 }
 
+class MyHomePage extends StatefulWidget {
+  const MyHomePage({super.key});
+  @override
+  State<MyHomePage> createState() => _MyHomePageState();
+}
+
 class _MyHomePageState extends State<MyHomePage> {
+  static const platform = MethodChannel('com.example.locket_widget/native_camera_communication');
+
+  Future<void> _clickPhotoNatively() async {
+    try {
+      final result = await platform.invokeMethod<int>('clickPhoto');
+      log('Success: $result');
+    } on PlatformException catch (e) {
+      log("Fail: '${e.message}'.");
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -35,6 +49,12 @@ class _MyHomePageState extends State<MyHomePage> {
             title: const Text('Top Stories'),
             centerTitle: false,
             titleTextStyle: const TextStyle(fontSize: 30, fontWeight: FontWeight.bold, color: Colors.black)),
+        floatingActionButton: FloatingActionButton.extended(
+          onPressed: () async {
+            _clickPhotoNatively();
+          },
+          label: const Text('Take a Photo'),
+        ),
         body: ListView.separated(
           separatorBuilder: (context, idx) {
             return const Divider();
