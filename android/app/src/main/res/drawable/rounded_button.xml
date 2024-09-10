@@ -2,23 +2,34 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <!-- Normal state (not pressed) -->
     <item android:state_pressed="false">
-        <shape android:shape="rectangle">
-            <solid android:color="#FF9800"/>
+        <shape android:shape="oval">
+            <solid android:color="#FFFFFF"/>
             <!-- Rounded corners -->
-            <corners android:radius="16dp"/>
+            <corners android:radius="32dp"/>
             <!-- Border/stroke color and width -->
-            <stroke android:width="10dp" android:color="#2C2C2C"/>
+            <stroke android:width="8dp" android:color="#2C2C2C"/>
         </shape>
     </item>
 
     <!-- Pressed state -->
     <item android:state_pressed="true">
-        <shape android:shape="rectangle">
-            <solid android:color="#FF9800"/>
-            <!-- Rounded corners -->
-            <corners android:radius="16dp"/>
-            <!-- Border/stroke color and width -->
-            <stroke android:width="10dp" android:color="#000000"/>
-        </shape>
+        <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+            <!-- Additional layer for pressed state -->
+            <item>
+                <shape android:shape="oval">
+                    <solid android:color="#FFFFFF"/> <!-- Color when pressed -->
+                    <corners android:radius="22dp"/>
+                    <stroke android:width="14dp" android:color="#000000"/> <!-- Border when pressed -->
+                </shape>
+            </item>
+            <!-- Main background layer for pressed state -->
+            <item>
+                <shape android:shape="oval">
+                    <solid android:color="#8B000000"/> <!-- Background color when pressed -->
+                    <corners android:radius="32dp"/>
+                    <stroke android:width="6dp" android:color="#FF9800"/> <!-- Border color when pressed -->
+                </shape>
+            </item>
+        </layer-list>
     </item>
 </selector>
