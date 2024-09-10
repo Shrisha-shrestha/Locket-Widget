@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-// New: import the home_widget package.
 import 'package:home_widget/home_widget.dart';
 import 'package:locket_widget/home_screen.dart';
 
