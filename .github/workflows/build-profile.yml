@@ -37,7 +37,7 @@ jobs:
         run: flutter pub get
 
       - name: Build APK
-        run: flutter build apk
+        run: flutter build apk --debug
       
       - name: Set Tag Name
         run: echo "TAG_NAME=dev-$(date +%Y%m%d%H%M%S)" >> $GITHUB_ENV
