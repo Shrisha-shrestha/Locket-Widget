@@ -28,8 +28,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Future<void> _clickPhotoNatively() async {
     try {
-      final result = await platform.invokeMethod<int>('clickPhoto');
-      log('Success: $result');
+      await platform.invokeMethod<int>('clickPhoto');
     } on PlatformException catch (e) {
       log("Fail: '${e.message}'.");
     }
@@ -40,6 +39,19 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
     final newHeadline = getNewsStories()[0];
     updateHeadline(newHeadline);
+    platform.setMethodCallHandler((call) async {
+      if (call.method == 'photoCaptured') {
+        String message = call.arguments;
+        log('Photo captured: $message');
+        Navigator.of(context).push(
+          MaterialPageRoute<ArticleScreen>(
+            builder: (context) {
+              return ArticleScreen(article: NewsArticle(title: "title", description: "description"));
+            },
+          ),
+        );
+      }
+    });
   }
 
   @override

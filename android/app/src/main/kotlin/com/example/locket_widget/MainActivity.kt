@@ -28,7 +28,7 @@ import java.util.concurrent.Executors
 class MainActivity : FlutterActivity() {
 
     private val CHANNEL = "com.example.locket_widget/native_camera_communication"
-
+    private var methodChannelResult: MethodChannel.Result? = null
     private lateinit var viewBinding: ActivityMainBinding
     
     private var imageCapture: ImageCapture? = null
@@ -38,7 +38,7 @@ class MainActivity : FlutterActivity() {
         super.configureFlutterEngine(flutterEngine)
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL).setMethodCallHandler { call, result ->
             if (call.method == "clickPhoto") {
-                getPermissions()
+                getPermissions(result)
                 // if (cameraStatus == CameraStatus.SUCCESS) {
                 //     result.success("Successful Image Capture")
                 // } else {
@@ -50,7 +50,9 @@ class MainActivity : FlutterActivity() {
         }
     }
 
-    private fun getPermissions() {
+    private fun getPermissions(result: MethodChannel.Result) {
+        methodChannelResult = result // Store the result callback
+        
         viewBinding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(viewBinding.root)
 
@@ -102,7 +104,7 @@ private fun takePhoto() {
        put(MediaStore.MediaColumns.DISPLAY_NAME, name)
        put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")
        if(Build.VERSION.SDK_INT > Build.VERSION_CODES.P) {
-           put(MediaStore.Images.Media.RELATIVE_PATH, "Pictures/CameraX-Image")
+           put(MediaStore.Images.Media.RELATIVE_PATH, "Pictures/Locket-Images")
        }
    }
 
@@ -120,12 +122,19 @@ private fun takePhoto() {
        object : ImageCapture.OnImageSavedCallback {
            override fun onError(exc: ImageCaptureException) {
                Log.e(TAG, "Photo capture failed: ${exc.message}", exc)
+                    // Send error result to Flutter
+                methodChannelResult?.error("PHOTO_CAPTURE_FAILED", exc.message, null)
+          
+           
            }
 
            override fun onImageSaved(output: ImageCapture.OutputFileResults){
                val msg = "Photo capture succeeded: ${output.savedUri}"
                Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT).show()
                Log.d(TAG, msg)
+                // Send the image URL back to Flutter
+                 methodChannelResult?.success(output.savedUri)
+              
            }
        }
    )
